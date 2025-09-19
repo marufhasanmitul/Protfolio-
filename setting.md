@@ -1,1 +1,35 @@
+##Home page xml
+```javascript
 
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    tools:context=".HomePage">
+
+
+    <TextView
+        android:id="@+id/tvWelcome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Welcome!"
+        android:textSize="20sp"
+        android:padding="10dp"/>
+
+    <Button
+        android:id="@+id/btnSettings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Go to Settings"/>
+
+</LinearLayout>
+
+
+
+```
