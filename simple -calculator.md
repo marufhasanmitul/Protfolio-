@@ -133,3 +133,159 @@
 </LinearLayout>}
 
 ```
+
+## java file
+package com.example.practice;
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+public class MainActivity extends AppCompatActivity {
+
+    EditText number1,number2;
+    Button btnAdd,btnSubtract,btnMultiply,btnDivide,btnEquals,btnClear;
+    TextView tvResult;
+    LinearLayout layoutHistory;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        number1=findViewById(R.id.number1);
+        number2=findViewById(R.id.number2);
+        btnAdd=findViewById(R.id.btnAdd);
+        btnSubtract=findViewById(R.id.btnSubtract);
+        btnMultiply=findViewById(R.id.btnMultiply);
+        btnDivide=findViewById(R.id.btnDivide);
+        btnEquals=findViewById(R.id.btnEquals);
+        btnClear=findViewById(R.id.btnClear);
+        tvResult=findViewById(R.id.tvResult);
+        layoutHistory=findViewById(R.id.layoutHistory);
+
+
+        //we are last operation chosen
+
+        final String[] lastOp={""};
+
+        btnAdd.setOnClickListener(v->{ performedOperation("+");});
+        btnSubtract.setOnClickListener(v->{ performedOperation("-");});
+        btnMultiply.setOnClickListener(v->{ performedOperation("*");});
+        btnDivide.setOnClickListener(v->{ performedOperation("/");});
+
+
+        // Clear button - reset everything
+        btnClear.setOnClickListener(v -> {
+            number1.setText("");
+            number2.setText("");
+            tvResult.setText("Result: ");
+            layoutHistory.removeAllViews();
+            Toast.makeText(MainActivity.this, "Cleared", Toast.LENGTH_SHORT).show();
+        });
+
+
+
+
+
+
+
+    }//=========================================================================
+
+    private void performedOperation(String operation){
+
+        String s1=number1.getText().toString().trim();
+        String s2=number2.getText().toString().trim();
+
+
+        if(s1.isEmpty() || s2.isEmpty()){
+            Toast.makeText(this, "Please Enter Both number", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+
+
+        double num1,num2;
+        try {
+            num1=Double.parseDouble(s1);
+            num2=Double.parseDouble(s2);
+
+        }catch (NumberFormatException e){
+            Toast.makeText(MainActivity.this, "Invalid number format", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        double result;
+        String historyEntry;
+
+        switch (operation){
+            case "+":
+                result=num1+num2;
+                historyEntry = num1 + " + " + num2 + " = " + result;
+                break;
+            case "-":
+                result=num1-num2;
+                historyEntry = num1 + " - " + num2 + " = " + result;
+                break;
+            case "*":
+                result=num1*num2;
+                historyEntry = num1 + " × " + num2 + " = " + result;
+                break;
+            case "/":
+                if(num2==0){
+                    Toast.makeText(MainActivity.this, "0 is no division", Toast.LENGTH_SHORT).show();
+                    return;
+                }else {
+                    result=num1/num2;
+                }
+                historyEntry = num1 + "  ÷ " + num2 + " = " + result;
+                break;
+            default:
+                Toast.makeText(this, "Unknown operation", Toast.LENGTH_SHORT).show();
+                return;
+
+        }
+
+
+        String resultText="";
+        if(result==Math.rint(result)){
+            resultText = String.format("Result: %.0f", result);
+        } else {
+            resultText = String.format("Result: %s", result);
+        }
+
+        tvResult.setText(resultText);
+
+
+        // Add to history
+        TextView tvHistoryItem = new TextView(this);
+        tvHistoryItem.setText(historyEntry);
+        tvHistoryItem.setTextSize(16);
+        layoutHistory.addView(tvHistoryItem);
+
+
+    }
+
+
+
+
+
+}
+
+```
