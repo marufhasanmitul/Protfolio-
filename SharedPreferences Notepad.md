@@ -31,3 +31,270 @@
 </RelativeLayout>
 
 ```
+
+## MainActivity.java
+
+```javascript
+
+package com.example.noteapp;
+
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
+
+import androidx.activity.EdgeToEdge;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+
+public class MainActivity extends AppCompatActivity {
+    FloatingActionButton fabAdd;
+    RecyclerView recyclerView;
+
+    ArrayList<String> notes;
+    NoteAdapter adapter;
+
+    private static final String PREF_NAME = "NotesPref";
+    private static final String KEY_NOTES = "notes";
+    private static final int REQUEST_CODE = 1;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        fabAdd=findViewById(R.id.fabAdd);
+        recyclerView=findViewById(R.id.recyclerView);
+        notes=new ArrayList<>();
+
+        notes=loadNotes();
+
+        adapter=new NoteAdapter(notes, new NoteAdapter.OnNoteClickListener() {
+            @Override
+            public void onNoteClick(int position) {
+                // Edit Note
+                Intent intent = new Intent(MainActivity.this, AddEditNoteActivity.class);
+                intent.putExtra("note", notes.get(position));
+                intent.putExtra("position", position);
+                startActivityForResult(intent, REQUEST_CODE);
+            }
+
+            @Override
+            public void onNoteLongClick(int position) {
+                // Delete Note
+                notes.remove(position);
+                saveNotes();
+                adapter.notifyDataSetChanged();
+                Toast.makeText(MainActivity.this, "Note Deleted", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+        recyclerView.setAdapter(adapter);
+
+
+
+
+
+        fabAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, AddEditNoteActivity.class);
+                startActivityForResult(intent, REQUEST_CODE);
+            }
+        });
+
+
+
+
+    }//====================================================
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode==REQUEST_CODE && resultCode==RESULT_OK && data != null){
+            String note=data.getStringExtra("note");
+            int position=data.getIntExtra("position",-1);
+
+            Log.d("custom_string",""+position);
+
+            if(position >=0){
+               notes.set(position,note);
+               adapter.notifyDataSetChanged();
+            }else {
+                notes.add(note);
+            }
+
+            saveNotes();
+
+        }
+    }
+
+    //======================================================
+
+    private void saveNotes() {
+        SharedPreferences prefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        Gson gson = new Gson();
+        String json = gson.toJson(notes);
+        editor.putString(KEY_NOTES, json);
+        editor.apply();
+    }
+
+
+    private ArrayList<String>loadNotes(){
+        SharedPreferences prefs=getSharedPreferences(PREF_NAME,MODE_PRIVATE);
+        String json=prefs.getString(KEY_NOTES,null);
+
+        Log.d("custom_Sting",""+json);
+
+        Gson gson=new Gson();
+        Type type = new TypeToken<ArrayList<String>>() {}.getType();
+
+
+        if(json !=null){
+            return gson.fromJson(json,type);
+        }else {
+            return new ArrayList<>();
+        }
+
+
+    }
+
+
+
+
+
+}
+
+```
+
+## addnaote.xml
+```javascript
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_margin="20dp"
+    tools:context=".AddEditNoteActivity">
+
+
+    <EditText
+        android:id="@+id/etNote"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Write your note here"
+        android:minLines="5"
+        android:gravity="top"
+        android:background="@android:drawable/editbox_background"/>
+
+    <Button
+        android:id="@+id/btnSave"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Save Note"
+        android:layout_marginTop="20dp"/>
+
+</LinearLayout>
+
+```
+
+## add_note.java
+
+```javascript
+
+package com.example.noteapp;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+public class AddEditNoteActivity extends AppCompatActivity {
+
+    EditText etNote;
+    Button btnSave;
+    int position = -1;
+
+
+
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_add_edit_note);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+
+        etNote=findViewById(R.id.etNote);
+        btnSave=findViewById(R.id.btnSave);
+
+        Intent intent = getIntent();
+        if (intent.hasExtra("note")) {
+            etNote.setText(intent.getStringExtra("note"));
+            position = intent.getIntExtra("position", -1);
+
+        }
+
+
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String note = etNote.getText().toString().trim();
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("note", note);
+                resultIntent.putExtra("position", position);
+                setResult(RESULT_OK, resultIntent);
+                finish();
+            }
+        });
+
+
+
+
+    }
+}
+
+```
