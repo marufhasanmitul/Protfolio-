@@ -1,5 +1,7 @@
+<p align="center" width="100%">
+    <img width="300" height="500" alt="Simple-calculator" src="https://github.com/user-attachments/assets/69c09728-90e3-4afb-a2cd-a14c20aba550" />
+</p>
 
-<img width="300" height="500" alt="Simple-calculator" src="https://github.com/user-attachments/assets/69c09728-90e3-4afb-a2cd-a14c20aba550" />
 
 
 ## Calculator Java android - XML file
