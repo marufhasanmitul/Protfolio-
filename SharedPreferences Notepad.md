@@ -1,7 +1,8 @@
 <p align="center" width="100%">
-    <img width="300" height="500" alt="setting-page" src="https://github.com/user-attachments/assets/0d25e640-8e86-425a-be8d-a79bbccb4850" />
-    <img width="300" height="500" alt="hoem-page" src="https://github.com/user-attachments/assets/fb820dff-85a2-4fd4-8c20-2ae1d6abbc78" />
+    <img width="300" height="500" alt="adnote" src="https://github.com/user-attachments/assets/02cb11ba-66b2-4a33-80b8-02b80d9d96e8" />
+    <img width="300" height="500" alt="home_page" src="https://github.com/user-attachments/assets/9c2bb6fd-a908-407d-bc52-7d4c5767be9d" />
 </p>
+
 
 
 
