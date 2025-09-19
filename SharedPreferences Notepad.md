@@ -298,3 +298,90 @@ public class AddEditNoteActivity extends AppCompatActivity {
 }
 
 ```
+
+## NoteAdapter.java
+
+```javascript
+package com.example.noteapp;
+
+import android.annotation.SuppressLint;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.List;
+
+public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
+
+    private List<String> notes;
+    private OnNoteClickListener listener;
+
+
+
+    public interface OnNoteClickListener{
+        void onNoteClick(int position);
+        void onNoteLongClick(int position);
+    }
+
+    public NoteAdapter(List<String> notes,OnNoteClickListener listener) {
+        this.notes = notes;
+        this.listener=listener;
+    }
+
+    public class NoteViewHolder extends RecyclerView.ViewHolder{
+        TextView tvNote;
+        public NoteViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tvNote = itemView.findViewById(R.id.tvNote);
+        }
+    }
+
+    @NonNull
+    @Override
+    public NoteViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.note_item, parent, false);
+        return new NoteViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull NoteViewHolder holder, @SuppressLint("RecyclerView") int position) {
+        String note = notes.get(position);
+        holder.tvNote.setText(note);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onNoteClick(position);
+            }
+        });
+
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                listener.onNoteLongClick(position);
+                return true;
+            }
+        });
+
+
+    }
+
+    @Override
+    public int getItemCount() {
+        return notes.size();
+    }
+
+
+
+
+
+
+
+}
+
+
+```
