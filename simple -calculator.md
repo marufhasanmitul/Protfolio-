@@ -135,6 +135,9 @@
 ```
 
 ## java file
+
+```javascript
+
 package com.example.practice;
 
 import android.os.Bundle;
